@@ -1,9 +1,8 @@
-// Export extend array for Flarum 2.0 Admin extender system
-// Get the Admin extender constructor from compat
-const Admin = flarum.core.compat['common/extenders'].Admin;
-
-export const extend = [
-  new Admin().setting(function () {
+// Use app.registry directly (replaces app.extensionData in Flarum 2.0)
+flarum.core.app.initializers.add('bilgi42-flarum-autofollow-tags', () => {
+  flarum.core.app.registry
+    .for('bilgi42-flarum-autofollow-tags')
+    .registerSetting(function () {
       const tags = flarum.core.app.store.all('tags');
       const selectedTags = JSON.parse(
         this.setting('bilgi42-autofollow-tags.tag_ids')() || '[]'
@@ -55,5 +54,5 @@ export const extend = [
           </div>
         </div>
       );
-    })
-];
+    });
+});
