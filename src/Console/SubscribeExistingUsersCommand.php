@@ -7,8 +7,6 @@ use Flarum\Tags\Tag;
 use Flarum\User\User;
 use Illuminate\Database\ConnectionInterface;
 use Flarum\Settings\SettingsRepositoryInterface;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class SubscribeExistingUsersCommand extends AbstractCommand
 {
@@ -29,7 +27,7 @@ class SubscribeExistingUsersCommand extends AbstractCommand
             ->setDescription('Subscribe all existing users to the configured auto-subscribe tags');
     }
 
-    protected function fire()
+    protected function fire(): int
     {
         $tagIds = json_decode($this->settings->get('bilgi42-autofollow-tags.tag_ids', '[]'), true);
 
