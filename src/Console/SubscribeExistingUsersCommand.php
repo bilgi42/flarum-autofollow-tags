@@ -54,12 +54,14 @@ class SubscribeExistingUsersCommand extends AbstractCommand
         foreach ($tags as $tag) {
             $this->info("\nProcessing tag: {$tag->name}");
 
-            // Get all users who aren't already subscribed to this tag
+            // Get all users who aren't already subscribed to this tag with 'follow' status
+            // This includes users who have no row, or have NULL subscription
             $users = User::whereNotExists(function ($query) use ($tag) {
                 $query->select($this->db->raw(1))
                       ->from('tag_user')
                       ->whereRaw('tag_user.user_id = users.id')
-                      ->where('tag_user.tag_id', $tag->id);
+                      ->where('tag_user.tag_id', $tag->id)
+                      ->where('tag_user.subscription', 'follow');
             })->get();
 
             $count = $users->count();
