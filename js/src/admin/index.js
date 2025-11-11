@@ -1,13 +1,7 @@
-import app from 'flarum/admin/app';
-
+// In Flarum 2.0 beta, app is available globally in the admin context
+// eslint-disable-next-line no-undef
 app.initializers.add('bilgi42-flarum-autofollow-tags', () => {
-  // Debug: log what's available
-  console.log('app object:', app);
-  console.log('app.extensionData:', app.extensionData);
-  console.log('flarum.core:', flarum.core);
-  console.log('flarum.core.compat:', flarum.core.compat);
-
-
+  // eslint-disable-next-line no-undef
   app.extensionData
     .for('bilgi42-flarum-autofollow-tags')
     .registerSetting(function () {
