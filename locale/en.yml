@@ -1,0 +1,6 @@
+bilgi42-autofollow-tags:
+  admin:
+    tags_label: Auto-Follow Tags
+    tags_help: Select which tags new users should be automatically subscribed to. Existing users can be subscribed using the command "php flarum tags:subscribe-existing"
+    no_tags_selected: No tags selected
+    select_tag: Select a tag to add...
