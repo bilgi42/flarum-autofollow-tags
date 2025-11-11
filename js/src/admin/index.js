@@ -1,4 +1,6 @@
-import app from '@flarum/core/admin';
+import * as admin from '@flarum/core/admin';
+
+const app = admin.app;
 
 app.initializers.add('bilgi42-flarum-autofollow-tags', () => {
   app.extensionData
