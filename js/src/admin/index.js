@@ -1,25 +1,11 @@
 // Use flarum.reg.get to access the admin app in Flarum 2.0
 const app = flarum.reg.get('core', 'admin/app');
 
-app.initializers.add('bilgi42-flarum-autofollow-tags', () => {
-  console.log('=== REGISTRY DEBUG ===');
-  console.log('app.registry:', app.registry);
-  console.log('app.registry.for:', app.registry.for);
-
-  const extensionData = app.registry.for('bilgi42-flarum-autofollow-tags');
-  console.log('extensionData:', extensionData);
-  console.log('extensionData.registerSetting:', extensionData?.registerSetting);
-  console.log('extensionData methods:', extensionData ? Object.getOwnPropertyNames(Object.getPrototypeOf(extensionData)) : 'none');
-
-  if (!extensionData || !extensionData.registerSetting) {
-    console.error('Cannot register settings - method does not exist!');
-    console.log('Available extensionData methods:', extensionData ? Object.keys(extensionData) : 'none');
-    return;
-  }
-
+// IMPORTANT: Extension ID is bilgi42-autofollow-tags (Flarum strips "flarum-" prefix)
+app.initializers.add('bilgi42-autofollow-tags', () => {
   // In Flarum 2.0, use app.registry instead of app.extensionData
   app.registry
-    .for('bilgi42-flarum-autofollow-tags')
+    .for('bilgi42-autofollow-tags')
     .registerSetting(function () {
       const tags = app.store.all('tags');
       const selectedTags = JSON.parse(
