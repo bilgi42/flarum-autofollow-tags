@@ -1,10 +1,9 @@
 import Extend from 'flarum/common/extenders';
-import app from 'flarum/admin/app';
 
 export default [
   new Extend.Admin()
     .setting(function () {
-      const tags = app.store.all('tags');
+      const tags = flarum.core.app.store.all('tags');
       const selectedTags = JSON.parse(
         this.setting('bilgi42-autofollow-tags.tag_ids')() || '[]'
       );
@@ -12,14 +11,14 @@ export default [
       return (
         <div className="Form-group">
           <label>
-            {app.translator.trans(
+            {flarum.core.app.translator.trans(
               'bilgi42-autofollow-tags.admin.tags_label',
               {},
               'Select tags to auto-follow for new users'
             )}
           </label>
           <div className="helpText">
-            {app.translator.trans(
+            {flarum.core.app.translator.trans(
               'bilgi42-autofollow-tags.admin.tags_help',
               {},
               'New users will automatically follow these tags'
