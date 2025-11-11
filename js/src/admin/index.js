@@ -1,3 +1,5 @@
+import app from '@flarum/core/admin';
+
 app.initializers.add('bilgi42-flarum-autofollow-tags', () => {
   app.extensionData
     .for('bilgi42-flarum-autofollow-tags')
