@@ -7,45 +7,46 @@ use Flarum\Tags\Tag;
 use Flarum\User\User;
 use Illuminate\Database\ConnectionInterface;
 use Flarum\Settings\SettingsRepositoryInterface;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class SubscribeExistingUsersCommand extends AbstractCommand
 {
-    protected $signature = "tags:subscribe-existing";
-    protected $description = "Subscribe all existing users to the configured auto-subscribe tags";
-
     protected $db;
     protected $settings;
 
-    public function __construct(
-        ConnectionInterface $db,
-        SettingsRepositoryInterface $settings,
-    ) {
+    public function __construct(ConnectionInterface $db, SettingsRepositoryInterface $settings)
+    {
         parent::__construct();
         $this->db = $db;
         $this->settings = $settings;
     }
 
-    public function handle()
+    protected function configure()
     {
-        $tagIds = json_decode(
-            $this->settings->get("bilgi42-autofollow-tags.tag_ids", "[]"),
-            true,
-        );
+        $this
+            ->setName('tags:subscribe-existing')
+            ->setDescription('Subscribe all existing users to the configured auto-subscribe tags');
+    }
+
+    protected function fire()
+    {
+        $tagIds = json_decode($this->settings->get('bilgi42-autofollow-tags.tag_ids', '[]'), true);
 
         if (empty($tagIds)) {
-            $this->error("No tags configured for auto-subscription!");
-            $this->info("Please configure tags in the admin panel first.");
+            $this->error('No tags configured for auto-subscription!');
+            $this->info('Please configure tags in the admin panel first.');
             return 1;
         }
 
-        $tags = Tag::whereIn("id", $tagIds)->get();
+        $tags = Tag::whereIn('id', $tagIds)->get();
 
         if ($tags->isEmpty()) {
-            $this->error("No valid tags found!");
+            $this->error('No valid tags found!');
             return 1;
         }
 
-        $this->info("Tags to subscribe users to:");
+        $this->info('Tags to subscribe users to:');
         foreach ($tags as $tag) {
             $this->info("  - {$tag->name} (ID: {$tag->id})");
         }
@@ -57,11 +58,10 @@ class SubscribeExistingUsersCommand extends AbstractCommand
 
             // Get all users who aren't already subscribed to this tag
             $users = User::whereNotExists(function ($query) use ($tag) {
-                $query
-                    ->select($this->db->raw(1))
-                    ->from("tag_user")
-                    ->whereRaw("tag_user.user_id = users.id")
-                    ->where("tag_user.tag_id", $tag->id);
+                $query->select($this->db->raw(1))
+                      ->from('tag_user')
+                      ->whereRaw('tag_user.user_id = users.id')
+                      ->where('tag_user.tag_id', $tag->id);
             })->get();
 
             $count = $users->count();
@@ -78,7 +78,7 @@ class SubscribeExistingUsersCommand extends AbstractCommand
 
             foreach ($users as $user) {
                 $user->tagState()->attach($tag->id, [
-                    "subscription" => "follow",
+                    'subscription' => 'follow'
                 ]);
                 $progressBar->advance();
             }
@@ -88,9 +88,7 @@ class SubscribeExistingUsersCommand extends AbstractCommand
             $totalSubscribed += $count;
         }
 
-        $this->info(
-            "\n✓ Successfully completed! Total subscriptions created: {$totalSubscribed}",
-        );
+        $this->info("\n✓ Successfully completed! Total subscriptions created: {$totalSubscribed}");
 
         return 0;
     }
