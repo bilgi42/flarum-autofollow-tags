@@ -1,6 +1,9 @@
 flarum.core.app.initializers.add('bilgi42-flarum-autofollow-tags', () => {
-  if (flarum.core.app.extensionData) {
-    flarum.core.app.extensionData
+  // Use registry in Flarum 2.0 (extensionData was removed)
+  const extensionData = flarum.core.app.registry || flarum.core.app.extensionData;
+
+  if (extensionData) {
+    extensionData
       .for('bilgi42-flarum-autofollow-tags')
       .registerSetting(function () {
         const tags = flarum.core.app.store.all('tags');
