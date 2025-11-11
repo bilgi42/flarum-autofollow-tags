@@ -40,11 +40,21 @@ return [
                     ]);
 
                     if ($tags->isNotEmpty()) {
+                        // Use direct database insertion as tagState() might not be available yet
+                        $db = resolve(\Illuminate\Database\ConnectionInterface::class);
+
                         foreach ($tags as $tag) {
                             try {
-                                $user->tagState()->attach($tag->id, [
-                                    'subscription' => 'follow'
-                                ]);
+                                // Insert or update the tag subscription
+                                $db->table('tag_user')->updateOrInsert(
+                                    [
+                                        'user_id' => $user->id,
+                                        'tag_id' => $tag->id,
+                                    ],
+                                    [
+                                        'subscription' => 'follow',
+                                    ]
+                                );
                                 $logger->info("[AutoFollowTags] Subscribed user {$user->id} to tag {$tag->name} ({$tag->id})");
                             } catch (\Exception $e) {
                                 $logger->error("[AutoFollowTags] Failed to subscribe user {$user->id} to tag {$tag->id}: {$e->getMessage()}");
