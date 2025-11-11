@@ -71,9 +71,8 @@ class SubscribeExistingUsersCommand extends AbstractCommand
 
             $this->info("  Found {$count} users to subscribe...");
 
-            $progressBar = $this->output->createProgressBar($count);
-            $progressBar->start();
-
+            // Subscribe users in batch
+            $subscribed = 0;
             foreach ($users as $user) {
                 // Use direct database insertion instead of tagState()
                 $this->db->table('tag_user')->updateOrInsert(
@@ -85,11 +84,15 @@ class SubscribeExistingUsersCommand extends AbstractCommand
                         'subscription' => 'follow',
                     ]
                 );
-                $progressBar->advance();
+                $subscribed++;
+
+                // Show progress every 10 users
+                if ($subscribed % 10 === 0 || $subscribed === $count) {
+                    $this->info("    Progress: {$subscribed}/{$count} users subscribed");
+                }
             }
 
-            $progressBar->finish();
-            $this->info("\n  ✓ Subscribed {$count} users");
+            $this->info("  ✓ Subscribed {$count} users");
             $totalSubscribed += $count;
         }
 
