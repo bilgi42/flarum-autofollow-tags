@@ -45,15 +45,26 @@ return [
 
                         foreach ($tags as $tag) {
                             try {
+                                // Check if subscription column exists (added by flarum/subscriptions)
+                                $columns = \Illuminate\Support\Facades\Schema::getColumnListing('tag_user');
+                                $hasSubscriptionColumn = in_array('subscription', $columns);
+
+                                $data = [
+                                    'user_id' => $user->id,
+                                    'tag_id' => $tag->id,
+                                ];
+
+                                if ($hasSubscriptionColumn) {
+                                    $data['subscription'] = 'follow';
+                                }
+
                                 // Insert or update the tag subscription
                                 $db->table('tag_user')->updateOrInsert(
                                     [
                                         'user_id' => $user->id,
                                         'tag_id' => $tag->id,
                                     ],
-                                    [
-                                        'subscription' => 'follow',
-                                    ]
+                                    $data
                                 );
                                 $logger->info("[AutoFollowTags] Subscribed user {$user->id} to tag {$tag->name} ({$tag->id})");
                             } catch (\Exception $e) {

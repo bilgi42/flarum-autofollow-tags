@@ -71,18 +71,29 @@ class SubscribeExistingUsersCommand extends AbstractCommand
 
             $this->info("  Found {$count} users to subscribe...");
 
+            // Check if subscription column exists (added by flarum/subscriptions)
+            $columns = \Illuminate\Support\Facades\Schema::getColumnListing('tag_user');
+            $hasSubscriptionColumn = in_array('subscription', $columns);
+
             // Subscribe users in batch
             $subscribed = 0;
             foreach ($users as $user) {
+                $data = [
+                    'user_id' => $user->id,
+                    'tag_id' => $tag->id,
+                ];
+
+                if ($hasSubscriptionColumn) {
+                    $data['subscription'] = 'follow';
+                }
+
                 // Use direct database insertion instead of tagState()
                 $this->db->table('tag_user')->updateOrInsert(
                     [
                         'user_id' => $user->id,
                         'tag_id' => $tag->id,
                     ],
-                    [
-                        'subscription' => 'follow',
-                    ]
+                    $data
                 );
                 $subscribed++;
 
