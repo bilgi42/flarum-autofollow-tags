@@ -1,7 +1,6 @@
 {
     "name": "bilgi42/flarum-autofollow-tags",
     "description": "Automatically subscribes users to selected tags with admin configuration",
-    "version": "1.0.0",
     "type": "flarum-extension",
     "license": "MIT",
     "require": {
