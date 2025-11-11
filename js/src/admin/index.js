@@ -1,9 +1,10 @@
-// Use app.registry directly (replaces app.extensionData in Flarum 2.0)
-flarum.core.app.initializers.add('bilgi42-flarum-autofollow-tags', () => {
-  flarum.core.app.registry
+import app from 'flarum/admin/app';
+
+app.initializers.add('bilgi42-flarum-autofollow-tags', () => {
+  app.extensionData
     .for('bilgi42-flarum-autofollow-tags')
     .registerSetting(function () {
-      const tags = flarum.core.app.store.all('tags');
+      const tags = app.store.all('tags');
       const selectedTags = JSON.parse(
         this.setting('bilgi42-autofollow-tags.tag_ids')() || '[]'
       );
@@ -11,14 +12,14 @@ flarum.core.app.initializers.add('bilgi42-flarum-autofollow-tags', () => {
       return (
         <div className="Form-group">
           <label>
-            {flarum.core.app.translator.trans(
+            {app.translator.trans(
               'bilgi42-autofollow-tags.admin.tags_label',
               {},
               'Select tags to auto-follow for new users'
             )}
           </label>
           <div className="helpText">
-            {flarum.core.app.translator.trans(
+            {app.translator.trans(
               'bilgi42-autofollow-tags.admin.tags_help',
               {},
               'New users will automatically follow these tags'
