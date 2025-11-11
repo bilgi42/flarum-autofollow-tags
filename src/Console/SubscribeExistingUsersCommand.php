@@ -75,9 +75,16 @@ class SubscribeExistingUsersCommand extends AbstractCommand
             $progressBar->start();
 
             foreach ($users as $user) {
-                $user->tagState()->attach($tag->id, [
-                    'subscription' => 'follow'
-                ]);
+                // Use direct database insertion instead of tagState()
+                $this->db->table('tag_user')->updateOrInsert(
+                    [
+                        'user_id' => $user->id,
+                        'tag_id' => $tag->id,
+                    ],
+                    [
+                        'subscription' => 'follow',
+                    ]
+                );
                 $progressBar->advance();
             }
 

@@ -1,12 +1,16 @@
+
+
 # Auto Follow Tags
 
 Automatically subscribes users to selected tags in Flarum with admin configuration.
 
+## Warning
+
+This extension was written with an LLM, I do not know PHP. From what I tested, it works, but use it with caution
+
 ## Features
 
 - Admin panel to select which tags users should be auto-subscribed to
-- Automatically subscribes new users upon registration
-- Command to bulk-subscribe existing users
 - Support for multiple tags
 
 ## Installation
