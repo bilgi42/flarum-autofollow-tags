@@ -2,6 +2,20 @@
 const app = flarum.reg.get('core', 'admin/app');
 
 app.initializers.add('bilgi42-flarum-autofollow-tags', () => {
+  console.log('=== DEBUG INFO ===');
+  console.log('app:', app);
+  console.log('app.extensionData:', app.extensionData);
+  console.log('app keys:', Object.keys(app));
+  console.log('app.constructor.name:', app.constructor.name);
+
+  // Check if extensionData exists
+  if (!app.extensionData) {
+    console.error('ERROR: app.extensionData does not exist!');
+    console.log('Available properties:', Object.getOwnPropertyNames(app));
+    console.log('Checking prototype:', Object.getOwnPropertyNames(Object.getPrototypeOf(app)));
+    return;
+  }
+
   app.extensionData
     .for('bilgi42-flarum-autofollow-tags')
     .registerSetting(function () {
