@@ -1,8 +1,8 @@
 import app from 'flarum/admin/app';
 
-app.initializers.add('bilgi42-autofollow-tags', () => {
+app.initializers.add('bilgi42-flarum-autofollow-tags', () => {
   app.extensionData
-    .for('bilgi42-autofollow-tags')
+    .for('bilgi42-flarum-autofollow-tags')
     .registerSetting(function () {
       const tags = app.store.all('tags');
       const selectedTags = JSON.parse(
