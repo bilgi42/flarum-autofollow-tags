@@ -37,5 +37,5 @@ return [
         }),
 
     (new Extend\Frontend('admin'))
-        ->js(__DIR__.'/js/dist/admin.js'),
+        ->js(__DIR__.'/dist/admin.js'),
 ];
