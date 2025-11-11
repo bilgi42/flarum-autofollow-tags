@@ -1,8 +1,13 @@
-import * as admin from '@flarum/core/admin';
-
-const app = admin.app;
+import app from 'flarum/admin/app';
 
 app.initializers.add('bilgi42-flarum-autofollow-tags', () => {
+  // Debug: log what's available
+  console.log('app object:', app);
+  console.log('app.extensionData:', app.extensionData);
+  console.log('flarum.core:', flarum.core);
+  console.log('flarum.core.compat:', flarum.core.compat);
+
+
   app.extensionData
     .for('bilgi42-flarum-autofollow-tags')
     .registerSetting(function () {
