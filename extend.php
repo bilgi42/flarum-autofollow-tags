@@ -10,56 +10,58 @@ use Flarum\Settings\SettingsRepositoryInterface;
 return [
     (new Extend\Event)
         ->listen(Registered::class, function (Registered $event) {
-            $user = $event->user;
-            $settings = resolve(SettingsRepositoryInterface::class);
+            try {
+                $user = $event->user;
+                $settings = resolve(SettingsRepositoryInterface::class);
+                $logger = resolve('log');
 
-            // Get the selected tag IDs from settings
-            $settingValue = $settings->get('bilgi42-autofollow-tags.tag_ids', '[]');
-            $tagIds = json_decode($settingValue, true);
+                // Get the selected tag IDs from settings
+                $settingValue = $settings->get('bilgi42-autofollow-tags.tag_ids', '[]');
+                $tagIds = json_decode($settingValue, true);
 
-            // Debug logging
-            \Illuminate\Support\Facades\Log::info('AutoFollowTags: User registered', [
-                'user_id' => $user->id,
-                'username' => $user->username,
-                'setting_value' => $settingValue,
-                'tag_ids' => $tagIds,
-            ]);
-
-            if (!empty($tagIds) && is_array($tagIds)) {
-                // Convert tag IDs to integers to ensure proper matching
-                $tagIds = array_map('intval', $tagIds);
-
-                // Get the actual tags to verify they exist
-                $tags = Tag::whereIn('id', $tagIds)->get();
-
-                \Illuminate\Support\Facades\Log::info('AutoFollowTags: Found tags', [
-                    'requested_ids' => $tagIds,
-                    'found_tags' => $tags->pluck('name', 'id')->toArray(),
+                // Debug logging
+                $logger->info('[AutoFollowTags] User registered', [
+                    'user_id' => $user->id,
+                    'username' => $user->username,
+                    'setting_value' => $settingValue,
+                    'tag_ids' => $tagIds,
                 ]);
 
-                if ($tags->isNotEmpty()) {
-                    foreach ($tags as $tag) {
-                        try {
-                            $user->tagState()->attach($tag->id, [
-                                'subscription' => 'follow'
-                            ]);
-                            \Illuminate\Support\Facades\Log::info("AutoFollowTags: Subscribed user {$user->id} to tag {$tag->name} ({$tag->id})");
-                        } catch (\Exception $e) {
-                            \Illuminate\Support\Facades\Log::error("AutoFollowTags: Failed to subscribe user {$user->id} to tag {$tag->id}", [
-                                'error' => $e->getMessage()
-                            ]);
+                if (!empty($tagIds) && is_array($tagIds)) {
+                    // Convert tag IDs to integers to ensure proper matching
+                    $tagIds = array_map('intval', $tagIds);
+
+                    // Get the actual tags to verify they exist
+                    $tags = Tag::whereIn('id', $tagIds)->get();
+
+                    $logger->info('[AutoFollowTags] Found tags', [
+                        'requested_ids' => $tagIds,
+                        'found_count' => $tags->count(),
+                    ]);
+
+                    if ($tags->isNotEmpty()) {
+                        foreach ($tags as $tag) {
+                            try {
+                                $user->tagState()->attach($tag->id, [
+                                    'subscription' => 'follow'
+                                ]);
+                                $logger->info("[AutoFollowTags] Subscribed user {$user->id} to tag {$tag->name} ({$tag->id})");
+                            } catch (\Exception $e) {
+                                $logger->error("[AutoFollowTags] Failed to subscribe user {$user->id} to tag {$tag->id}: {$e->getMessage()}");
+                            }
                         }
+                    } else {
+                        $logger->warning('[AutoFollowTags] No valid tags found for IDs: ' . implode(', ', $tagIds));
                     }
                 } else {
-                    \Illuminate\Support\Facades\Log::warning('AutoFollowTags: No valid tags found for IDs', [
-                        'tag_ids' => $tagIds
+                    $logger->info('[AutoFollowTags] No tags configured or invalid data', [
+                        'setting_value' => $settingValue,
                     ]);
                 }
-            } else {
-                \Illuminate\Support\Facades\Log::info('AutoFollowTags: No tags configured or invalid data', [
-                    'setting_value' => $settingValue,
-                    'parsed_value' => $tagIds,
-                ]);
+            } catch (\Exception $e) {
+                $logger = resolve('log');
+                $logger->error('[AutoFollowTags] Exception in event listener: ' . $e->getMessage());
+                $logger->error('[AutoFollowTags] Stack trace: ' . $e->getTraceAsString());
             }
         }),
 
