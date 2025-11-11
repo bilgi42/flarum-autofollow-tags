@@ -1,32 +1,33 @@
 {
-  "name": "bilgi42/flarum-autofollow-tags",
-  "description": "Automatically subscribes users to selected tags with admin configuration",
-  "type": "flarum-extension",
-  "license": "MIT",
-  "require": {
-    "flarum/core": "^1.0",
-    "flarum/tags": "*"
-  },
-  "autoload": {
-    "psr-4": {
-      "Bilgi42\\AutoFollowTags\\": "src/"
-    }
-  },
-  "extra": {
-    "flarum-extension": {
-      "title": "Auto Follow Tags",
-      "category": "feature",
-      "icon": {
-        "name": "fas fa-bell",
-        "backgroundColor": "#e74c3c",
-        "color": "#fff"
-      }
+    "name": "bilgi42/flarum-autofollow-tags",
+    "description": "Automatically subscribes users to selected tags with admin configuration",
+    "version": "1.0.0",
+    "type": "flarum-extension",
+    "license": "MIT",
+    "require": {
+        "flarum/core": "^1.0 || ^2.0",
+        "flarum/tags": "*"
     },
-    "flarum-cli": {
-      "modules": {
-        "admin": true,
-        "backendTesting": true
-      }
+    "autoload": {
+        "psr-4": {
+            "Bilgi42\\AutoFollowTags\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Auto Follow Tags",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-bell",
+                "backgroundColor": "#e74c3c",
+                "color": "#fff"
+            }
+        },
+        "flarum-cli": {
+            "modules": {
+                "admin": true,
+                "backendTesting": true
+            }
+        }
     }
-  }
 }
