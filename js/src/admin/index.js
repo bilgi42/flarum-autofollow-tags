@@ -1,7 +1,7 @@
-// In Flarum 2.0 beta, app is available globally in the admin context
-// eslint-disable-next-line no-undef
+// Use flarum.reg.get to access the admin app in Flarum 2.0
+const app = flarum.reg.get('core', 'admin/app');
+
 app.initializers.add('bilgi42-flarum-autofollow-tags', () => {
-  // eslint-disable-next-line no-undef
   app.extensionData
     .for('bilgi42-flarum-autofollow-tags')
     .registerSetting(function () {
