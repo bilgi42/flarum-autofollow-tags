@@ -43,12 +43,12 @@ return [
                         // Use direct database insertion as tagState() might not be available yet
                         $db = resolve(\Illuminate\Database\ConnectionInterface::class);
 
+                        // Check if subscription column exists (added by flarum/subscriptions)
+                        $columns = $db->getSchemaBuilder()->getColumnListing('tag_user');
+                        $hasSubscriptionColumn = in_array('subscription', $columns);
+
                         foreach ($tags as $tag) {
                             try {
-                                // Check if subscription column exists (added by flarum/subscriptions)
-                                $columns = \Illuminate\Support\Facades\Schema::getColumnListing('tag_user');
-                                $hasSubscriptionColumn = in_array('subscription', $columns);
-
                                 $data = [
                                     'user_id' => $user->id,
                                     'tag_id' => $tag->id,

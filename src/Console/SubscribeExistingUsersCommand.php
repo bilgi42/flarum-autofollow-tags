@@ -74,7 +74,7 @@ class SubscribeExistingUsersCommand extends AbstractCommand
             $this->info("  Found {$count} users to subscribe...");
 
             // Check if subscription column exists (added by flarum/subscriptions)
-            $columns = \Illuminate\Support\Facades\Schema::getColumnListing('tag_user');
+            $columns = $this->db->getSchemaBuilder()->getColumnListing('tag_user');
             $hasSubscriptionColumn = in_array('subscription', $columns);
 
             // Subscribe users in batch
